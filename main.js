@@ -65,6 +65,7 @@
     let isSaving = false;
     let saveStatus = null; // 'success', 'error'
     let saveErrorMessage = null; // last save error message for UI
+    let cloudSaveFailed = false; // whether cloud saves/listener have failed (show banner)
 
     const INITIAL_PAGES = [
         { id: 1, layout: 'hero', content: { title: 'Memories with G', text: 'This is our shared digital photobook. All changes are saved automatically and seen by everyone with the link!', photos: [], captions: [] } },
@@ -129,6 +130,7 @@
         } catch (error) {
             console.error("Error saving shared photobook:", error?.message || error);
             saveStatus = 'error';
+            cloudSaveFailed = true;
             saveErrorMessage = error?.message || String(error);
             // Persist locally as a fallback so user's uploads aren't lost
             try {
@@ -181,6 +183,7 @@
             renderApp();
         }, (error) => {
             console.error("Error listening to photobook data:", error?.message || error);
+            cloudSaveFailed = true;
             // Try loading a local fallback so user doesn't lose recent uploads
             try {
                 const fallback = localStorage.getItem(`photobook:${appId}`);
@@ -518,6 +521,22 @@
             `;
             return;
         }
+        // Banner shown when cloud saves/listener have failed
+        let bannerHtml = '';
+        if (cloudSaveFailed) {
+            bannerHtml = `
+                <div id="cloud-banner" class="w-full bg-yellow-400 text-black p-3 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <strong>Cloud saves unavailable</strong>
+                        <span class="text-sm opacity-90 max-w-xl truncate" title="${saveErrorMessage || ''}">${saveErrorMessage || 'Using local fallback for now.'}</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="retrySaveFromLocal()" class="px-3 py-1 bg-white text-yellow-600 rounded">Retry</button>
+                        <button onclick="dismissCloudBanner()" class="px-3 py-1 bg-white text-yellow-600 rounded">Dismiss</button>
+                    </div>
+                </div>
+            `;
+        }
         
         let activePage = pages[activePageIndex];
         if (!activePage) {
@@ -717,7 +736,7 @@
             </div>
         `;
 
-        appElement.innerHTML = sidebarHtml + canvasHtml;
+        appElement.innerHTML = sidebarHtml + bannerHtml + canvasHtml;
         // Re-inject the global handlers since innerHTML rebuilds them
         setupGlobalHandlers();
     };
@@ -748,6 +767,10 @@
         } catch (e) {
             console.error('Retry from local failed:', e?.message || e);
         }
+    };
+    window.dismissCloudBanner = () => {
+        cloudSaveFailed = false;
+        renderApp();
     };
     // Expose toggle function so inline onclicks can toggle module-scoped `isEditing` safely
     window.toggleEditMode = () => { isEditing = !isEditing; renderApp(); };
