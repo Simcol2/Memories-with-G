@@ -143,7 +143,9 @@
 
     const initializeFirebase = async () => {
         if (!Object.keys(firebaseConfig).length) {
-            console.error("Firebase config is missing.");
+            console.warn("Firebase config is missing — running demo mode using local initial pages.");
+            // Fall back to demo content so the app is usable without a Firebase project
+            pages = INITIAL_PAGES.slice();
             isLoading = false;
             renderApp();
             return;
