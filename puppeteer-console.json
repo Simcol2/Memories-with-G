@@ -10,7 +10,7 @@
     },
     {
       "type": "console",
-      "text": "Error listening to photobook data: JSHandle@error"
+      "text": "Error listening to photobook data: Missing or insufficient permissions."
     }
   ],
   "errors": []

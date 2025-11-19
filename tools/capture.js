@@ -40,6 +40,18 @@ const puppeteer = require('puppeteer');
     // Wait a little to allow runtime initialization
     await new Promise((r) => setTimeout(r, 1500));
 
+    // If a toggle-edit button exists, try clicking it to simulate entering edit mode
+    try {
+      const hasToggle = await page.$('#toggle-edit-btn');
+      if (hasToggle) {
+        await page.click('#toggle-edit-btn');
+        console.log('Clicked toggle-edit-btn to enter edit mode');
+        await new Promise((r) => setTimeout(r, 700));
+      }
+    } catch (e) {
+      console.warn('Could not click toggle button:', e.message || e);
+    }
+
     // Capture screenshot
     await page.screenshot({ path: outScreenshot, fullPage: true });
     console.log('Saved screenshot to', outScreenshot);

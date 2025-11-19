@@ -51,7 +51,16 @@
     let currentUserId = null;
     let pages = [];
     let activePageIndex = 0;
-    let isEditing = true;
+    // Default to preview mode for visitors. Enable editing only when URL has `?edit=1`
+    // or when an environment-global `window.__is_editor` is provided.
+    let isEditing = (function(){
+        try {
+            const urlEdit = new URLSearchParams(window.location.search).get('edit');
+            return urlEdit === '1' || (typeof window.__is_editor !== 'undefined' && !!window.__is_editor);
+        } catch (e) {
+            return (typeof window.__is_editor !== 'undefined' && !!window.__is_editor);
+        }
+    })();
     let isLoading = true;
     let isSaving = false;
     let saveStatus = null; // 'success', 'error'
@@ -91,9 +100,8 @@
 
     const getBookRef = () => {
         if (db) {
-            // Use the public path for collaborative data
-            const path = `/artifacts/${appId}/public/data/photobook/shared_book`;
-            return doc(db, path);
+            // Use the public path for collaborative data (explicit path segments)
+            return doc(db, 'artifacts', String(appId), 'public', 'data', 'photobook', 'shared_book');
         }
         return null;
     };
@@ -114,9 +122,18 @@
             }, { merge: true });
             saveStatus = 'success';
             console.log("Photobook saved successfully to shared collection.");
+            // Clear any local fallback since save succeeded
+            try { localStorage.removeItem(`photobook:${appId}`); } catch (e) {}
         } catch (error) {
-            console.error("Error saving shared photobook:", error);
+            console.error("Error saving shared photobook:", error?.message || error);
             saveStatus = 'error';
+            // Persist locally as a fallback so user's uploads aren't lost
+            try {
+                localStorage.setItem(`photobook:${appId}`, JSON.stringify({ pages: currentPages, updatedAt: new Date().toISOString() }));
+                console.log('Saved photobook to localStorage fallback.');
+            } catch (e) {
+                console.error('Failed to write local fallback:', e?.message || e);
+            }
         } finally {
             isSaving = false;
             renderApp();
@@ -130,6 +147,8 @@
     const debouncedSave = (newPages) => {
         pages = newPages; // Update the global state immediately
         renderApp(); // Rerender immediately to show user change
+        // Keep a local copy immediately so changes survive reloads if cloud save fails
+        try { localStorage.setItem(`photobook:${appId}`, JSON.stringify({ pages: pages, updatedAt: new Date().toISOString() })); } catch (e) {}
         
         if (saveTimeout) {
             clearTimeout(saveTimeout);
@@ -148,6 +167,8 @@
                 const loadedPages = docSnap.data().pages;
                 pages = loadedPages;
                 activePageIndex = Math.min(activePageIndex, loadedPages.length - 1);
+                // Clear local fallback since we have a server copy
+                try { localStorage.removeItem(`photobook:${appId}`); } catch (e) {}
             } else if (pages.length === 0) { 
                 console.log("No data found. Initializing default shared photobook.");
                 pages = INITIAL_PAGES;
@@ -155,7 +176,20 @@
             isLoading = false;
             renderApp();
         }, (error) => {
-            console.error("Error listening to photobook data:", error);
+            console.error("Error listening to photobook data:", error?.message || error);
+            // Try loading a local fallback so user doesn't lose recent uploads
+            try {
+                const fallback = localStorage.getItem(`photobook:${appId}`);
+                if (fallback) {
+                    const parsed = JSON.parse(fallback);
+                    if (parsed && parsed.pages) {
+                        pages = parsed.pages;
+                        console.log('Loaded photobook from localStorage fallback.');
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to load local fallback:', e?.message || e);
+            }
             isLoading = false;
             renderApp();
         });
@@ -268,16 +302,19 @@
     
     // Copy the App ID to the clipboard
     const copyAppIdToClipboard = () => {
+        const shareUrl = `${location.origin}${location.pathname}?id=${encodeURIComponent(appId)}`;
         const tempInput = document.createElement('textarea');
-        tempInput.value = appId;
+        tempInput.value = shareUrl;
         document.body.appendChild(tempInput);
         tempInput.select();
         document.execCommand('copy');
         document.body.removeChild(tempInput);
         const copyMessage = document.getElementById('copy-message');
-        copyMessage.textContent = 'Copied!';
-        copyMessage.classList.remove('opacity-0');
-        setTimeout(() => copyMessage.classList.add('opacity-0'), 1500);
+        if (copyMessage) {
+            copyMessage.textContent = 'Link copied!';
+            copyMessage.classList.remove('opacity-0');
+            setTimeout(() => copyMessage.classList.add('opacity-0'), 1500);
+        }
     };
 
     // --- Renderer Functions (HTML Generation) ---
@@ -462,6 +499,9 @@
         const appElement = document.getElementById('app');
         if (!appElement) return;
 
+        // Build a full, shareable URL for this book (used in the sidebar)
+        const shareUrl = `${location.origin}${location.pathname}?id=${encodeURIComponent(appId)}`;
+
         if (isLoading) {
             appElement.innerHTML = `
                 <div class="flex flex-col items-center justify-center h-screen w-full">
@@ -518,7 +558,7 @@
             <div class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 shadow-sm z-20">
                 <div class="flex items-center gap-4">
                     <button 
-                        onclick="isEditing = !isEditing; renderApp();"
+                        id="toggle-edit-btn"
                         class="px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2 transition-colors ${
                             !isEditing 
                             ? 'bg-blue-600 text-white shadow-md' 
@@ -616,8 +656,8 @@
                         ${IconSVG('Users', 16)} Shared Book ID
                     </p>
                     <div class="flex items-center justify-between gap-2 bg-white border border-gray-300 rounded-lg p-2">
-                        <p class="text-xs text-gray-700 break-words select-all font-mono min-w-0 truncate">
-                            ${appId}
+                        <p class="text-xs text-gray-700 break-words font-mono min-w-0 truncate">
+                            <a href="${shareUrl}" target="_blank" class="text-blue-600 underline break-words">${shareUrl}</a>
                         </p>
                         <button 
                             onclick="copyAppIdToClipboard()"
@@ -680,6 +720,8 @@
     window.handleChangeLayout = handleChangeLayout;
     window.saveBook = saveBook;
     window.copyAppIdToClipboard = copyAppIdToClipboard;
+    // Expose toggle function so inline onclicks can toggle module-scoped `isEditing` safely
+    window.toggleEditMode = () => { isEditing = !isEditing; renderApp(); };
 
 
     const setupGlobalHandlers = () => {
@@ -695,6 +737,17 @@
         }
         fileInputRef.id = 'file-input';
         document.body.appendChild(fileInputRef);
+
+        // Attach click handler to the edit/preview toggle button if present
+        const toggleBtn = document.getElementById('toggle-edit-btn');
+        if (toggleBtn) {
+            const newBtn = toggleBtn.cloneNode(true);
+            toggleBtn.parentNode.replaceChild(newBtn, toggleBtn);
+            newBtn.addEventListener('click', () => {
+                isEditing = !isEditing;
+                renderApp();
+            });
+        }
     };
     
     // Start the application
