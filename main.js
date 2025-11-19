@@ -39,6 +39,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
     // --- Configuration and Initialization ---
 
@@ -86,6 +87,36 @@
                 return `<svg${cattr} xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>`;
             case 'Image':
                 return `<svg${cattr} xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="14" rx="2"/><circle cx="9" cy="8" r="1"/><path d="M21 21l-6-6-4 4-3-3-2 2"/></svg>`;
+            case 'Upload':
+                return `<svg${cattr} xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 5 17 10"/><line x1="12" y1="5" x2="12" y2="19"/></svg>`;
+            case 'Save':
+                return `<svg${cattr} xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>`;
+            case 'AlertTriangle':
+                return `<svg${cattr} xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
+            case 'Edit3':
+                return `<svg${cattr} xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`;
+            case 'Eye':
+                return `<svg${cattr} xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>`;
+            case 'Maximize':
+                return `<svg${cattr} xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/></svg>`;
+            case 'Columns':
+                return `<svg${cattr} xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="18"/><rect x="14" y="3" width="7" height="18"/></svg>`;
+            case 'Grid':
+                return `<svg${cattr} xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="8"/><rect x="13" y="3" width="8" height="8"/><rect x="3" y="13" width="8" height="8"/><rect x="13" y="13" width="8" height="8"/></svg>`;
+            case 'Smile':
+                return `<svg${cattr} xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>`;
+            case 'MoveUp':
+                return `<svg${cattr} xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>`;
+            case 'MoveDown':
+                return `<svg${cattr} xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>`;
+            case 'Trash2':
+                return `<svg${cattr} xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>`;
+            case 'Book':
+                return `<svg${cattr} xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4v15.5A2.5 2.5 0 0 0 6.5 22H20V4z"/></svg>`;
+            case 'Users':
+                return `<svg${cattr} xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+            case 'Copy':
+                return `<svg${cattr} xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
             default:
                 return `<svg${cattr} xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>`;
         }
@@ -97,6 +128,9 @@
     // Reference to the file input element
     let fileInputRef;
     let activePhotoIndex = null;
+    let storage = null;
+    let lastUpdatedBy = null;
+    let lastUpdatedAt = null;
 
     // --- Firebase and Data Logic ---
 
@@ -125,6 +159,10 @@
             }, { merge: true });
             saveStatus = 'success';
             console.log("Photobook saved successfully to shared collection.");
+            // update metadata shown in the UI
+            lastUpdatedBy = currentUserId;
+            lastUpdatedAt = new Date().toISOString();
+            cloudSaveFailed = false;
             // Clear any local fallback since save succeeded
             try { localStorage.removeItem(`photobook:${appId}`); } catch (e) {}
         } catch (error) {
@@ -171,6 +209,10 @@
             if (docSnap.exists() && docSnap.data().pages) {
                 console.log("Loading shared photobook from Firestore.");
                 const loadedPages = docSnap.data().pages;
+                // surface metadata
+                lastUpdatedBy = docSnap.data().updatedBy || null;
+                lastUpdatedAt = docSnap.data().updatedAt || null;
+                cloudSaveFailed = false;
                 pages = loadedPages;
                 activePageIndex = Math.min(activePageIndex, loadedPages.length - 1);
                 // Clear local fallback since we have a server copy
@@ -213,6 +255,8 @@
         app = initializeApp(firebaseConfig);
         db = getFirestore(app);
         auth = getAuth(app);
+        // initialize storage (may fail if storage package not available)
+        try { storage = getStorage(app); } catch (e) { storage = null; }
 
         // Authentication
         try {
@@ -294,18 +338,51 @@
         fileInputRef.click();
     };
 
-    const handleFileChange = (e) => {
+    const handleFileChange = async (e) => {
         const file = e.target.files[0];
         if (file && activePhotoIndex !== null) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const newPages = [...pages];
-                const page = newPages[activePageIndex];
-                if (!page.content.photos) page.content.photos = [];
-                page.content.photos[activePhotoIndex] = event.target.result;
-                debouncedSave(newPages);
-            };
-            reader.readAsDataURL(file);
+            // If Storage is available, upload there and store a small URL
+            if (storage) {
+                const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+                const path = `photobooks/${appId}/${Date.now()}_${safeName}`;
+                const sRef = storageRef(storage, path);
+                try {
+                    await uploadBytes(sRef, file);
+                    const url = await getDownloadURL(sRef);
+                    const newPages = [...pages];
+                    // ensure page exists
+                    if (!newPages[activePageIndex]) newPages[activePageIndex] = { id: Date.now(), layout: 'hero', content: { title: '', text: '', photos: [], captions: [] } };
+                    const page = newPages[activePageIndex];
+                    if (!page.content.photos) page.content.photos = [];
+                    page.content.photos[activePhotoIndex] = url;
+                    debouncedSave(newPages);
+                } catch (err) {
+                    console.error('Upload to Storage failed, falling back to base64:', err?.message || err);
+                    // fallback to base64 data URL
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const newPages = [...pages];
+                        if (!newPages[activePageIndex]) newPages[activePhotoIndex] = { id: Date.now(), layout: 'hero', content: { title: '', text: '', photos: [], captions: [] } };
+                        const page = newPages[activePageIndex];
+                        if (!page.content.photos) page.content.photos = [];
+                        page.content.photos[activePhotoIndex] = event.target.result;
+                        debouncedSave(newPages);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            } else {
+                // No storage available — keep existing behavior (base64 fallback)
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const newPages = [...pages];
+                    if (!newPages[activePageIndex]) newPages[activePageIndex] = { id: Date.now(), layout: 'hero', content: { title: '', text: '', photos: [], captions: [] } };
+                    const page = newPages[activePageIndex];
+                    if (!page.content.photos) page.content.photos = [];
+                    page.content.photos[activePhotoIndex] = event.target.result;
+                    debouncedSave(newPages);
+                };
+                reader.readAsDataURL(file);
+            }
         }
         e.target.value = null; 
     };
@@ -329,6 +406,19 @@
 
     // --- Renderer Functions (HTML Generation) ---
 
+    const escapeHtml = (str = '') => {
+        return String(str === null || typeof str === 'undefined' ? '' : str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    };
+
+    const formatDate = (iso) => {
+        try { return new Date(iso).toLocaleString(); } catch (e) { return iso; }
+    };
+
     // Generic Input/Textarea component for editing
     const EditableText = (type, value, onChange, className, placeholder, isEditing, style = '', tag = 'input', index = null) => {
         if (isEditing) {
@@ -341,10 +431,10 @@
             }
         } else {
             if (tag === 'textarea') {
-                // For view mode, render textarea content as multi-line
-                return `<p class="${className}" style="white-space: pre-line; ${style}">${value || placeholder}</p>`;
+                // For view mode, render textarea content as multi-line (escaped)
+                return `<p class="${className}" style="white-space: pre-line; ${style}">${escapeHtml(value || placeholder)}</p>`;
             } else {
-                 return `<h2 class="${className}" style="${style}">${value || placeholder}</h2>`;
+                 return `<h2 class="${className}" style="${style}">${escapeHtml(value || placeholder)}</h2>`;
             }
         }
     };
@@ -388,7 +478,7 @@
                 />
             `;
         } else if (caption) {
-            return `<p class="text-xs text-gray-500 text-center ${extraClass}">${caption}</p>`;
+            return `<p class="text-xs text-gray-500 text-center ${extraClass}">${escapeHtml(caption)}</p>`;
         }
         return '';
     };
@@ -601,6 +691,7 @@
                         ${!isEditing ? 'Edit Book' : 'Preview Mode'}
                     </button>
                     <div id="save-status-container" class="relative">${saveStatusIndicator}</div>
+                    <div class="ml-4 text-xs text-gray-500">Last: ${lastUpdatedAt ? formatDate(lastUpdatedAt) : '—'} by <span class="font-mono">${escapeHtml(lastUpdatedBy || '—')}</span></div>
                 </div>
 
                 ${isEditing ? `
@@ -667,7 +758,7 @@
                             </div>
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm font-medium truncate ${idx === activePageIndex ? 'text-blue-800' : 'text-gray-700'}">
-                                    ${page.content.title || `Page ${idx + 1}`}
+                                    ${escapeHtml(page.content.title || `Page ${idx + 1}`)}
                                 </p>
                                 <p class="text-xs text-gray-400 capitalize">${page.layout} Layout</p>
                             </div>
