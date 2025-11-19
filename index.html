@@ -60,7 +60,8 @@
     // Global variables provided by the environment (must be accessed safely)
     const appId = typeof window.__app_id !== 'undefined' ? window.__app_id : (typeof __app_id !== 'undefined' ? __app_id : 'default-photobook-id');
     const firebaseConfig = typeof window.__firebase_config !== 'undefined' ? window.__firebase_config : (typeof __firebase_config !== 'undefined' ? __firebase_config : {});
-    const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+    // Injected custom token for Firebase authentication
+    const initialAuthToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwczovL2lkZW50aXR5dG9vbGtpdC5nb29nbGVhcGlzLmNvbS9nb29nbGUuaWRlbnRpdHkuaWRlbnRpdHl0b29sa2l0LnYxLklkZW50aXR5VG9vbGtpdCIsImlhdCI6MTc2MzU3OTkzOSwiZXhwIjoxNzYzNTgzNTM5LCJpc3MiOiJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BtZW1vcmllcy13aXRoLWcuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJzdWIiOiJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BtZW1vcmllcy13aXRoLWcuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJ1aWQiOiJkZXYtdXNlci0xNzYzNTc5OTM5NzE4In0.ZgexbzZ98WRJp-zpmUG_hzO4F99Dr27uavQpwpKqDCsolYCxRd5_2t2zRn6qhAsnqk4Ji4RI9eJ5uhTWkLwfvud2iNeIVyXH-2U7-VkKlGY4vC4s_SNZeegVBpVHo35nU4Ob7duWt7rhXZgrvL0zz9cqT2oMLX_kuxqYpZh1BJvjnY5NQgTFhKBocPprD8j0DEU8GL_XQXPscWAqMvp6O1VLxygcKnScYdbPAlygbStpXNYuHJiWxCz4pCyi8njfxBuQwwMcWXidgpeynuP9e6WVAA-XwP4UR8w8R5jXxeJAoZb6V8aEStPC7AE3KwzmhYg1oHyHvXuq2keTlk2bTQ";
 
     let app, db, auth;
     let currentUserId = null;
