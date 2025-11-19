@@ -43,8 +43,8 @@
     // --- Configuration and Initialization ---
 
     // Global variables provided by the environment (must be accessed safely)
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-photobook-id';
-    const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+    const appId = typeof window.__app_id !== 'undefined' ? window.__app_id : (typeof __app_id !== 'undefined' ? __app_id : 'default-photobook-id');
+    const firebaseConfig = typeof window.__firebase_config !== 'undefined' ? window.__firebase_config : (typeof __firebase_config !== 'undefined' ? __firebase_config : {});
     const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
     let app, db, auth;
@@ -59,6 +59,26 @@
     const INITIAL_PAGES = [
         { id: 1, layout: 'hero', content: { title: 'Memories with G', text: 'This is our shared digital photobook. All changes are saved automatically and seen by everyone with the link!', photos: [], captions: [] } },
     ];
+
+    // Lightweight SVG icon helper (simple placeholders to avoid external API mismatch)
+    const IconSVG = (name, size = 16, cls = '') => {
+        const cattr = cls ? ` class="${cls}"` : '';
+        const s = size;
+        switch (name) {
+            case 'Loader2':
+                return `<svg${cattr} xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9"/></svg>`;
+            case 'Plus':
+                return `<svg${cattr} xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>`;
+            case 'ChevronLeft':
+                return `<svg${cattr} xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>`;
+            case 'ChevronRight':
+                return `<svg${cattr} xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>`;
+            case 'Image':
+                return `<svg${cattr} xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="14" rx="2"/><circle cx="9" cy="8" r="1"/><path d="M21 21l-6-6-4 4-3-3-2 2"/></svg>`;
+            default:
+                return `<svg${cattr} xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>`;
+        }
+    };
 
     // Debounce timer for auto-saving
     let saveTimeout = null;
@@ -285,7 +305,7 @@
     const PhotoSlot = (photoUrl, photoIndex, isEditing, layoutClass = "") => {
         const placeholderContent = `
             <div class="text-gray-400 flex flex-col items-center">
-                ${lucide.icons.Image.toSvg({ size: 24 })}
+                ${IconSVG('Image', 24)}
                 <span class="text-sm">Add Photo</span>
             </div>
         `;
@@ -296,7 +316,7 @@
 
         const uploadOverlay = isEditing ? `
             <div class="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity cursor-pointer" onclick="triggerUpload(${photoIndex})">
-                ${lucide.icons.Upload.toSvg({ size: 24, class: "text-white drop-shadow-md" })}
+                ${IconSVG('Upload', 24, 'text-white drop-shadow-md')}
             </div>
         ` : '';
 
@@ -369,7 +389,7 @@
         if (isLoading) {
             appElement.innerHTML = `
                 <div class="flex flex-col items-center justify-center h-screen w-full">
-                    <svg class="animate-spin text-blue-500 mb-4" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${lucide.icons.Loader2.toSvg({})}</svg>
+                    ${IconSVG('Loader2', 48, 'animate-spin text-blue-500 mb-4')}
                     <p class="text-gray-600">Connecting to shared memories...</p>
                 </div>
             `;

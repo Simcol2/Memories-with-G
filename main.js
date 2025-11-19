@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -33,21 +33,6 @@
 <div id="app" class="flex h-screen overflow-hidden">
     <!-- Content will be rendered here by JavaScript -->
 </div>
-
-<!-- Firebase config (injected) -->
-<script>
-    // Firebase client config (safe to include in frontend)
-    window.__firebase_config = {
-        apiKey: "AIzaSyAaymSDniDFlRfLA-DnYbHWr0SXNEZPQGU",
-        authDomain: "memories-with-g.firebaseapp.com",
-        projectId: "memories-with-g",
-        storageBucket: "memories-with-g.firebasestorage.app",
-        messagingSenderId: "94253928446",
-        appId: "1:94253928446:web:b536c5b730da60cd57faaf"
-    };
-    // Optional: default app/book id used by the demo
-    window.__app_id = "memories-with-g";
-</script>
 
 <!-- Firebase and App Logic -->
 <script type="module">
@@ -178,9 +163,7 @@
 
     const initializeFirebase = async () => {
         if (!Object.keys(firebaseConfig).length) {
-            console.warn("Firebase config is missing — running demo mode using local initial pages.");
-            // Fall back to demo content so the app is usable without a Firebase project
-            pages = INITIAL_PAGES.slice();
+            console.error("Firebase config is missing.");
             isLoading = false;
             renderApp();
             return;

@@ -1,0 +1,17 @@
+{
+  "logs": [
+    {
+      "type": "console",
+      "text": "cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation"
+    },
+    {
+      "type": "console",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "type": "console",
+      "text": "Error listening to photobook data: JSHandle@error"
+    }
+  ],
+  "errors": []
+}

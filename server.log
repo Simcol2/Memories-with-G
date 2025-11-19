@@ -22,10 +22,26 @@ Available on:
   http://10.0.13.81:8080
 Hit CTRL-C to stop the server
 
-[2025-11-19T17:26:35.171Z]  "GET /" "curl/8.5.0"
-(node:13571) [DEP0066] DeprecationWarning: OutgoingMessage.prototype._headers is deprecated
+[2025-11-19T17:49:59.122Z]  "GET /" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+(node:24313) [DEP0066] DeprecationWarning: OutgoingMessage.prototype._headers is deprecated
 (Use `node --trace-deprecation ...` to show where the warning was created)
-[2025-11-19T17:26:42.815Z]  "GET /" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
-[2025-11-19T17:26:43.148Z]  "GET /favicon.ico" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
-[2025-11-19T17:26:43.149Z]  "GET /favicon.ico" Error (404): "Not found"
-[2025-11-19T17:32:23.766Z]  "GET /" "curl/8.5.0"
+[2025-11-19T17:50:19.801Z]  "HEAD /" "curl/8.5.0"
+[2025-11-19T17:50:53.305Z]  "GET /" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+[2025-11-19T17:51:37.722Z]  "GET /" "curl/8.5.0"
+[2025-11-19T17:51:50.270Z]  "GET /" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+[2025-11-19T17:56:49.900Z]  "GET /" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+[2025-11-19T18:00:10.319Z]  "GET /" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/142.0.0.0 Safari/537.36"
+[2025-11-19T18:00:15.448Z]  "GET /favicon.ico" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/142.0.0.0 Safari/537.36"
+[2025-11-19T18:00:15.451Z]  "GET /favicon.ico" Error (404): "Not found"
+[2025-11-19T18:01:04.441Z]  "GET /" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/142.0.0.0 Safari/537.36"
+[2025-11-19T18:01:09.624Z]  "GET /favicon.ico" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/142.0.0.0 Safari/537.36"
+[2025-11-19T18:01:09.626Z]  "GET /favicon.ico" Error (404): "Not found"
+[2025-11-19T18:07:42.020Z]  "GET /" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/142.0.0.0 Safari/537.36"
+[2025-11-19T18:07:46.619Z]  "GET /favicon.ico" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/142.0.0.0 Safari/537.36"
+[2025-11-19T18:07:46.621Z]  "GET /favicon.ico" Error (404): "Not found"
+[2025-11-19T18:08:14.095Z]  "GET /" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/142.0.0.0 Safari/537.36"
+[2025-11-19T18:08:18.784Z]  "GET /favicon.ico" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/142.0.0.0 Safari/537.36"
+[2025-11-19T18:08:18.786Z]  "GET /favicon.ico" Error (404): "Not found"
+[2025-11-19T18:08:41.159Z]  "GET /" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/142.0.0.0 Safari/537.36"
+[2025-11-19T18:08:45.401Z]  "GET /favicon.ico" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/142.0.0.0 Safari/537.36"
+[2025-11-19T18:08:45.404Z]  "GET /favicon.ico" Error (404): "Not found"
