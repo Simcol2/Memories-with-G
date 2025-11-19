@@ -17,7 +17,8 @@
         }
         /* Page size aspect ratio */
         .photobook-page {
-            aspect-ratio: 1.4 / 1;
+            /* Ensures the page maintains a good aspect ratio, but max-w is needed */
+            aspect-ratio: 1.4 / 1; 
         }
     </style>
     <script type="module">
@@ -290,7 +291,6 @@
 
     // --- App Logic Handlers ---
 
-    // FIX APPLIED HERE
     const handleAddPage = () => {
         const newPage = {
             id: Date.now(),
@@ -517,7 +517,7 @@
         switch (layout) {
             case 'hero': 
                 return `
-                    <div class="flex flex-col h-full p-8 bg-white shadow-sm">
+                    <div class="flex flex-col h-full p-4 md:p-8 bg-white shadow-sm">
                         <div class="flex-1 relative mb-6">
                             ${PhotoSlot(photos[0], 0, props.isEditing, "h-full w-full")}
                         </div>
@@ -530,15 +530,15 @@
 
             case 'split':
                 return `
-                    <div class="flex flex-row h-full bg-white shadow-sm">
-                        <div class="w-1/2 p-6 relative group flex flex-col">
+                    <div class="flex flex-col md:flex-row h-full bg-white shadow-sm">
+                        <div class="w-full md:w-1/2 p-4 md:p-6 relative group flex flex-col">
                             ${PhotoSlot(photos[0], 0, props.isEditing)}
                             <div class="mt-3 h-6">
                                 ${CaptionInput(captions[0], 0, props.isEditing)}
                             </div>
                         </div>
 
-                        <div class="w-1/2 p-8 flex flex-col justify-center space-y-6">
+                        <div class="w-full md:w-1/2 p-4 md:p-8 flex flex-col justify-center space-y-6">
                             ${EditableText('title', props.title, null, 'w-full text-4xl font-serif text-gray-800 border-b border-transparent hover:border-gray-300 focus:border-blue-500 outline-none bg-transparent', 'Title', props.isEditing)}
                             ${EditableText('text', props.text, null, 'w-full h-64 text-gray-600 text-lg leading-relaxed border-l-2 border-transparent hover:border-gray-300 focus:border-blue-500 outline-none bg-transparent resize-none p-2', 'Tell the story...', props.isEditing, '', 'textarea')}
                         </div>
@@ -556,11 +556,11 @@
                 `).join('');
 
                 return `
-                    <div class="h-full p-8 bg-white flex flex-col">
+                    <div class="h-full p-4 md:p-8 bg-white flex flex-col">
                         <div class="mb-6 text-center">
                             ${EditableText('title', props.title, null, 'text-2xl font-medium text-gray-800 text-center bg-transparent border-b border-transparent hover:border-gray-300 focus:border-blue-500 outline-none', 'Gallery Title', props.isEditing, '', 'input')}
                         </div>
-                        <div class="grid grid-cols-2 grid-rows-2 gap-6 flex-1">
+                        <div class="grid grid-cols-2 grid-rows-2 gap-4 md:gap-6 flex-1">
                             ${gridItems}
                         </div>
                     </div>
@@ -588,11 +588,11 @@
                 `).join('');
 
                 return `
-                    <div class="h-full p-6 bg-stone-50 shadow-inner flex flex-col relative overflow-hidden">
+                    <div class="h-full p-4 md:p-6 bg-stone-50 shadow-inner flex flex-col relative overflow-hidden">
                         <div class="absolute top-0 left-0 w-32 h-32 bg-yellow-100 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
                         
-                        <div class="z-10 mb-8 pl-4">
-                            ${EditableText('title', props.title, null, 'text-4xl font-handwriting text-gray-800 bg-transparent border-b-2 border-transparent hover:border-stone-300 focus:border-stone-500 outline-none w-full', 'My Adventure', props.isEditing, 'font-family: \'Shadows Into Light\', cursive;')}
+                        <div class="z-10 mb-4 md:mb-8 pl-4">
+                            ${EditableText('title', props.title, null, 'text-2xl md:text-4xl font-handwriting text-gray-800 bg-transparent border-b-2 border-transparent hover:border-stone-300 focus:border-stone-500 outline-none w-full', 'My Adventure', props.isEditing, 'font-family: \'Shadows Into Light\', cursive;')}
                         </div>
 
                         <div class="flex-1 relative">
@@ -710,7 +710,7 @@
         }
 
         const toolbarHtml = `
-            <div class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 shadow-sm z-20">
+            <div class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 md:px-6 shadow-sm z-20">
                 <div class="flex items-center gap-4">
                     <button 
                         id="toggle-edit-btn"
@@ -723,12 +723,12 @@
                         ${!isEditing ? IconSVG('Edit3', 16) : IconSVG('Eye', 16)}
                         ${!isEditing ? 'Edit Book' : 'Preview Mode'}
                     </button>
-                    <div id="save-status-container" class="relative">${saveStatusIndicator}</div>
-                    <div class="ml-4 text-xs text-gray-500">Last: ${lastUpdatedAt ? formatDate(lastUpdatedAt) : '—'} by <span class="font-mono">${escapeHtml(lastUpdatedBy || '—')}</span></div>
+                    <div id="save-status-container" class="hidden sm:block relative">${saveStatusIndicator}</div>
+                    <div class="hidden lg:block ml-4 text-xs text-gray-500">Last: ${lastUpdatedAt ? formatDate(lastUpdatedAt) : '—'} by <span class="font-mono">${escapeHtml(lastUpdatedBy || '—')}</span></div>
                 </div>
 
                 ${isEditing ? `
-                    <div class="flex items-center gap-4">
+                    <div class="hidden sm:flex items-center gap-4">
                         <div class="flex items-center gap-1 bg-gray-100 p-1 rounded-lg">
                             <button onclick="handleChangeLayout('hero')" class="p-2 rounded-md ${activePage.layout === 'hero' ? 'bg-white shadow text-blue-600' : 'text-gray-500 hover:bg-gray-200'}" title="Hero Layout">
                                 ${IconSVG('Maximize', 18)}
@@ -763,7 +763,7 @@
         `;
 
         const sidebarHtml = `
-            <div class="w-64 bg-white border-r border-gray-200 flex flex-col transition-all duration-300 ${!isEditing ? '-ml-64' : ''}">
+            <div class="hidden md:flex w-64 bg-white border-r border-gray-200 flex-col transition-all duration-300 ${!isEditing ? '-ml-64' : ''}">
                 <div class="p-6 border-b border-gray-100">
                     <h1 class="text-xl font-serif font-bold text-gray-800 flex items-center gap-2">
                         ${IconSVG('Book', 20, 'text-blue-600')}
@@ -830,13 +830,13 @@
         `;
 
         const canvasHtml = `
-            <div class="flex-1 flex flex-col min-w-0 bg-gray-100 relative">
+            <div class="flex-1 flex flex-col min-w-full md:min-w-0 bg-gray-100 relative">
                 ${toolbarHtml}
-                <div class="flex-1 overflow-hidden flex items-center justify-center p-8 relative">
+                <div class="flex-1 overflow-y-auto flex items-center justify-center p-4 relative">
                     <button 
                         onclick="prevPage()"
                         ${activePageIndex === 0 ? 'disabled' : ''}
-                        class="absolute left-4 z-10 p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg text-gray-700 hover:bg-white hover:text-blue-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all transform hover:scale-110"
+                        class="absolute left-1 md:left-4 z-10 p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg text-gray-700 hover:bg-white hover:text-blue-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all transform hover:scale-110"
                     >
                         ${IconSVG('ChevronLeft', 24)}
                     </button>
@@ -844,7 +844,7 @@
                     <button 
                         onclick="nextPage()"
                         ${activePageIndex === pages.length - 1 ? 'disabled' : ''}
-                        class="absolute right-4 z-10 p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg text-gray-700 hover:bg-white hover:text-blue-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all transform hover:scale-110"
+                        class="absolute right-1 md:right-4 z-10 p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg text-gray-700 hover:bg-white hover:text-blue-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all transform hover:scale-110"
                     >
                         ${IconSVG('ChevronRight', 24)}
                     </button>

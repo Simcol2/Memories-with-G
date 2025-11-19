@@ -16,6 +16,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "firebase-admin": "^13.6.0",
     "http-server": "^14.1.1",
     "puppeteer": "^24.30.0"
   }
