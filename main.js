@@ -356,13 +356,14 @@
                     if (!page.content.photos) page.content.photos = [];
                     page.content.photos[activePhotoIndex] = url;
                     debouncedSave(newPages);
-                } catch (err) {
+                    } catch (err) {
                     console.error('Upload to Storage failed, falling back to base64:', err?.message || err);
                     // fallback to base64 data URL
                     const reader = new FileReader();
                     reader.onload = (event) => {
                         const newPages = [...pages];
-                        if (!newPages[activePageIndex]) newPages[activePhotoIndex] = { id: Date.now(), layout: 'hero', content: { title: '', text: '', photos: [], captions: [] } };
+                        // Ensure we create the page at the active PAGE index (not the photo index)
+                        if (!newPages[activePageIndex]) newPages[activePageIndex] = { id: Date.now(), layout: 'hero', content: { title: '', text: '', photos: [], captions: [] } };
                         const page = newPages[activePageIndex];
                         if (!page.content.photos) page.content.photos = [];
                         page.content.photos[activePhotoIndex] = event.target.result;
@@ -742,7 +743,7 @@
                 <div class="flex-1 overflow-y-auto p-4 space-y-3">
                     ${pages.map((page, idx) => `
                         <div 
-                            onclick="activePageIndex = ${idx}; renderApp();"
+                            onclick="goToPage(${idx})"
                             class="p-3 rounded-lg cursor-pointer flex items-center gap-3 transition-all border ${
                                 idx === activePageIndex 
                                 ? 'bg-blue-50 border-blue-200 shadow-sm' 
@@ -804,7 +805,7 @@
                 <div class="flex-1 overflow-hidden flex items-center justify-center p-8 relative">
                     <!-- Navigation Arrows -->
                     <button 
-                        onclick="activePageIndex = Math.max(0, activePageIndex - 1); renderApp();"
+                        onclick="prevPage()"
                         ${activePageIndex === 0 ? 'disabled' : ''}
                         class="absolute left-4 z-10 p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg text-gray-700 hover:bg-white hover:text-blue-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all transform hover:scale-110"
                     >
@@ -812,7 +813,7 @@
                     </button>
                     
                     <button 
-                        onclick="activePageIndex = Math.min(pages.length - 1, activePageIndex + 1); renderApp();"
+                        onclick="nextPage()"
                         ${activePageIndex === pages.length - 1 ? 'disabled' : ''}
                         class="absolute right-4 z-10 p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg text-gray-700 hover:bg-white hover:text-blue-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all transform hover:scale-110"
                     >
@@ -865,6 +866,34 @@
     };
     // Expose toggle function so inline onclicks can toggle module-scoped `isEditing` safely
     window.toggleEditMode = () => { isEditing = !isEditing; renderApp(); };
+
+    // Navigation helpers (exposed for inline handlers)
+    const prevPage = () => {
+        if (activePageIndex > 0) {
+            activePageIndex = Math.max(0, activePageIndex - 1);
+            renderApp();
+        }
+    };
+
+    const nextPage = () => {
+        if (activePageIndex < pages.length - 1) {
+            activePageIndex = Math.min(pages.length - 1, activePageIndex + 1);
+            renderApp();
+        }
+    };
+
+    const goToPage = (i) => {
+        const idx = Number(i);
+        if (!Number.isNaN(idx) && idx >= 0 && idx < pages.length) {
+            activePageIndex = idx;
+            renderApp();
+        }
+    };
+
+    // expose navigation to window so inline onclicks can call them
+    window.prevPage = prevPage;
+    window.nextPage = nextPage;
+    window.goToPage = goToPage;
 
 
     const setupGlobalHandlers = () => {
