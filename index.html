@@ -34,6 +34,21 @@
     <!-- Content will be rendered here by JavaScript -->
 </div>
 
+<!-- Firebase config (injected) -->
+<script>
+    // Firebase client config (safe to include in frontend)
+    window.__firebase_config = {
+        apiKey: "AIzaSyAaymSDniDFlRfLA-DnYbHWr0SXNEZPQGU",
+        authDomain: "memories-with-g.firebaseapp.com",
+        projectId: "memories-with-g",
+        storageBucket: "memories-with-g.firebasestorage.app",
+        messagingSenderId: "94253928446",
+        appId: "1:94253928446:web:b536c5b730da60cd57faaf"
+    };
+    // Optional: default app/book id used by the demo
+    window.__app_id = "memories-with-g";
+</script>
+
 <!-- Firebase and App Logic -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
