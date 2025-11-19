@@ -1,13 +1,21 @@
 {
   "name": "memories-with-g",
   "version": "1.0.0",
-  "description": "",
-  "main": "main", 
+  "description": "Collaborative Photobook Web App",
+  "main": "index.html", 
   "scripts": {
-    "start": "node main",
+    "start": "http-server . -p $PORT -c-1",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": [
+    "photobook",
+    "firebase",
+    "collaborative",
+    "html"
+  ],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "http-server": "^14.1.1"
+  }
 }
