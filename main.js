@@ -64,6 +64,7 @@
     let isLoading = true;
     let isSaving = false;
     let saveStatus = null; // 'success', 'error'
+    let saveErrorMessage = null; // last save error message for UI
 
     const INITIAL_PAGES = [
         { id: 1, layout: 'hero', content: { title: 'Memories with G', text: 'This is our shared digital photobook. All changes are saved automatically and seen by everyone with the link!', photos: [], captions: [] } },
@@ -112,6 +113,7 @@
         
         isSaving = true;
         saveStatus = null;
+        saveErrorMessage = null;
         renderApp();
 
         try {
@@ -127,6 +129,7 @@
         } catch (error) {
             console.error("Error saving shared photobook:", error?.message || error);
             saveStatus = 'error';
+            saveErrorMessage = error?.message || String(error);
             // Persist locally as a fallback so user's uploads aren't lost
             try {
                 localStorage.setItem(`photobook:${appId}`, JSON.stringify({ pages: currentPages, updatedAt: new Date().toISOString() }));
@@ -139,6 +142,7 @@
             renderApp();
             setTimeout(() => {
                 saveStatus = null;
+                saveErrorMessage = null;
                 renderApp();
             }, 3000); 
         }
@@ -235,8 +239,11 @@
             layout: 'hero',
             content: { title: 'New Shared Memory', text: 'Add a description here...', photos: [], captions: [] }
         };
+        // compute the index for the new page using the current pages length
+        const newIndex = pages.length;
         debouncedSave([...pages, newPage]);
-        activePageIndex = pages.length; 
+        // set the active page to the newly added page
+        activePageIndex = newIndex;
     };
 
     const handleDeletePage = () => {
@@ -537,9 +544,15 @@
             `;
         } else if (saveStatus === 'error') {
             saveStatusIndicator = `
-                <div class="flex items-center gap-2 text-sm font-medium px-4 py-2 bg-red-500 text-white rounded-md shadow-lg">
-                    ${IconSVG('AlertTriangle', 16)}
-                    Error!
+                <div class="flex flex-col items-start gap-2 text-sm font-medium px-4 py-2 bg-red-500 text-white rounded-md shadow-lg">
+                    <div class="flex items-center gap-2">
+                        ${IconSVG('AlertTriangle', 16)}
+                        <span>Error saving</span>
+                    </div>
+                    <div class="text-xs opacity-90 max-w-xs truncate" title="${saveErrorMessage || ''}">${saveErrorMessage || 'Save failed'}</div>
+                    <div class="pt-1">
+                        <button onclick="retrySaveFromLocal()" class="px-2 py-1 text-sm bg-white text-red-600 rounded border">Retry from local</button>
+                    </div>
                 </div>
             `;
         } else {
@@ -720,6 +733,22 @@
     window.handleChangeLayout = handleChangeLayout;
     window.saveBook = saveBook;
     window.copyAppIdToClipboard = copyAppIdToClipboard;
+    window.retrySaveFromLocal = () => {
+        try {
+            const fallback = localStorage.getItem(`photobook:${appId}`);
+            if (fallback) {
+                const parsed = JSON.parse(fallback);
+                if (parsed && parsed.pages) {
+                    console.log('Retrying save from local fallback...');
+                    saveBook(parsed.pages);
+                }
+            } else {
+                console.warn('No local fallback found to retry.');
+            }
+        } catch (e) {
+            console.error('Retry from local failed:', e?.message || e);
+        }
+    };
     // Expose toggle function so inline onclicks can toggle module-scoped `isEditing` safely
     window.toggleEditMode = () => { isEditing = !isEditing; renderApp(); };
 
